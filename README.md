@@ -2,7 +2,7 @@
 
 A cryptocurrency ticker that outputs HTML to use with [GeekTool](https://www.tynsoe.org/v2/geektool/) on macOS.
 
-![](./screenshots/screenshot.png)
+<img src="./screenshots/screenshot.png" width="261" />
 
 ## Usage
 
