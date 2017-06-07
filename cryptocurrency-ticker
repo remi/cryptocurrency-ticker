@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+
+# This script requires `curl`, `jq`, `xargs` `bc` and `awk`
+
+add_arrows() {
+  foo=$(echo $1 | sed -e 's/^\([0-9]\)/▲ \1/g')
+  foo=$(echo $foo | sed -e 's/^-/▼ /g')
+  echo $foo
+}
+
+fetch_data() {
+  echo $(/usr/bin/curl -s -XGET "https://api.coinmarketcap.com/v1/ticker/$1/?convert=usd")
+}
+
+eth=$(fetch_data 'ethereum')
+eth_to_usd=$(echo $eth | /usr/local/bin/jq ".[0].price_usd" | /usr/bin/xargs printf "%.*f\n" 2)
+eth_24h=$(echo $eth | /usr/local/bin/jq ".[0].percent_change_24h" | /usr/bin/xargs printf "%.*f\n" 2)
+eth_1h=$(echo $eth | /usr/local/bin/jq ".[0].percent_change_1h" | /usr/bin/xargs printf "%.*f\n" 2)
+
+btc=$(fetch_data 'bitcoin')
+btc_to_usd=$(echo $btc | /usr/local/bin/jq ".[0].price_usd" | /usr/bin/xargs printf "%.*f\n" 2)
+btc_24h=$(echo $btc | /usr/local/bin/jq ".[0].percent_change_24h" | /usr/bin/xargs printf "%.*f\n" 2)
+btc_1h=$(echo $btc | /usr/local/bin/jq ".[0].percent_change_1h" | /usr/bin/xargs printf "%.*f\n" 2)
+
+gnt=$(fetch_data 'golem-network-tokens')
+gnt_to_usd=$(echo $gnt | /usr/local/bin/jq ".[0].price_usd" | /usr/bin/xargs printf "%.*f\n" 4)
+gnt_24h=$(echo $gnt | /usr/local/bin/jq ".[0].percent_change_24h" | /usr/bin/xargs printf "%.*f\n" 2)
+gnt_1h=$(echo $gnt | /usr/local/bin/jq ".[0].percent_change_1h" | /usr/bin/xargs printf "%.*f\n" 2)
+
+stratis=$(fetch_data 'stratis')
+stratis_to_usd=$(echo $stratis | /usr/local/bin/jq ".[0].price_usd" | /usr/bin/xargs printf "%.*f\n" 4)
+stratis_24h=$(echo $stratis | /usr/local/bin/jq ".[0].percent_change_24h" | /usr/bin/xargs printf "%.*f\n" 2)
+stratis_1h=$(echo $stratis | /usr/local/bin/jq ".[0].percent_change_1h" | /usr/bin/xargs printf "%.*f\n" 2)
+
+btc_24h=$(add_arrows $btc_24h)
+eth_24h=$(add_arrows $eth_24h)
+gnt_24h=$(add_arrows $gnt_24h)
+stratis_24h=$(add_arrows $stratis_24h)
+
+btc_1h=$(add_arrows $btc_1h)
+eth_1h=$(add_arrows $eth_1h)
+gnt_1h=$(add_arrows $gnt_1h)
+stratis_1h=$(add_arrows $stratis_1h)
+
+echo "
+<html>
+  <style>
+    body { color: rgba(255, 255, 255, 0.5); font-family: 'Avenir'; font-size: 16px; font-weight: 500; }
+    small { font-size: 8px; position: relative; top: -0.5em; }
+    div { display: flex; align-items: center; padding: 2px 0 2px 2px; margin: 0 0 2px; border-bottom: 1px solid rgba(255, 255, 255, 0.25); }
+    div:last-child { border-bottom: 0; }
+    em { font-style: normal; color: rgba(255, 255, 255, 0.9); font-weight: 600; text-shadow: 0 0 2px rgba(0, 0, 0, 0.5); }
+    span { width: 14px; text-align: center; margin: 0 10px 0 0; font-size: 14px; }
+    strong { font-size: 10px; margin: 0 0 0 8px; opacity: 0.85; }
+  </style>
+  <body>
+"
+
+echo $stratis_to_usd $stratis_1h $stratis_24h | /usr/bin/awk '{print "<div style=\"opacity: 0.5\"><span><img src=\"http://exomel.s3.amazonaws.com/tmp/stratis.png\" height=14 /></span> <em>"$1"</em><small>$</small><strong>"$2"</strong><strong>"$3"</strong></div>"}'
+echo $gnt_to_usd $gnt_1h $gnt_24h | /usr/bin/awk '{print "<div style=\"opacity: 0.6\"><span><img src=\"http://exomel.s3.amazonaws.com/tmp/golem.png\" height=14 /></span> <em>"$1"</em><small>$</small><strong>"$2"</strong><strong>"$3"</strong></div>"}'
+echo $btc_to_usd $btc_1h $btc_24h | /usr/bin/awk '{print "<div style=\"opacity: 0.7\"><span><img src=\"http://exomel.s3.amazonaws.com/tmp/bitcoin.png\" height=14 /></span> <em>"$1"</em><small>$</small><strong>"$2"</strong><strong>"$3"</strong></div>"}'
+echo $eth_to_usd $eth_1h $eth_24h | /usr/bin/awk '{print "<div style=""opacity: 0.8""><span><img src=\"http://exomel.s3.amazonaws.com/tmp/ethereum.png\" height=14 /></span> <em>"$1"</em><small>$</small><strong>"$2"</strong><strong>"$3"</strong></div>"}'
+
+echo "
+  </body>
+</html>
+"
+
+exit 0
