@@ -1,11 +1,16 @@
 #!/usr/bin/env bash
 
-# This script requires `curl`, `jq`, `xargs` `bc` and `awk`
+# This script requires the following executables:
+# - /usr/local/bin/jq
+# - /usr/bin/curl
+# - /usr/bin/xargs
+# - /usr/bin/bc
+# - /usr/bin/awk
 
 add_arrows() {
-  foo=$(echo $1 | sed -e 's/^\([0-9]\)/▲ \1/g')
-  foo=$(echo $foo | sed -e 's/^-/▼ /g')
-  echo $foo
+  string=$(echo $1 | sed -e 's/^\([0-9]\)/▲ \1/g')
+  string=$(echo $string | sed -e 's/^-/▼ /g')
+  echo $string
 }
 
 fetch_data() {
