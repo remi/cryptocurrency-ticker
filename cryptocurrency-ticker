@@ -32,32 +32,26 @@ gnt_to_usd=$(echo $gnt | /usr/local/bin/jq ".[0].price_usd" | /usr/bin/xargs pri
 gnt_24h=$(echo $gnt | /usr/local/bin/jq ".[0].percent_change_24h" | /usr/bin/xargs printf "%.*f\n" 2)
 gnt_1h=$(echo $gnt | /usr/local/bin/jq ".[0].percent_change_1h" | /usr/bin/xargs printf "%.*f\n" 2)
 
-stratis=$(fetch_data 'stratis')
-stratis_to_usd=$(echo $stratis | /usr/local/bin/jq ".[0].price_usd" | /usr/bin/xargs printf "%.*f\n" 4)
-stratis_24h=$(echo $stratis | /usr/local/bin/jq ".[0].percent_change_24h" | /usr/bin/xargs printf "%.*f\n" 2)
-stratis_1h=$(echo $stratis | /usr/local/bin/jq ".[0].percent_change_1h" | /usr/bin/xargs printf "%.*f\n" 2)
-
-siacoin=$(fetch_data 'siacoin')
-siacoin_to_usd=$(echo $siacoin | /usr/local/bin/jq ".[0].price_usd" | /usr/bin/xargs printf "%.*f\n" 4)
-siacoin_24h=$(echo $siacoin | /usr/local/bin/jq ".[0].percent_change_24h" | /usr/bin/xargs printf "%.*f\n" 2)
-siacoin_1h=$(echo $siacoin | /usr/local/bin/jq ".[0].percent_change_1h" | /usr/bin/xargs printf "%.*f\n" 2)
+xrp=$(fetch_data 'ripple')
+xrp_to_usd=$(echo $xrp | /usr/local/bin/jq ".[0].price_usd" | /usr/bin/xargs printf "%.*f\n" 4)
+xrp_24h=$(echo $xrp | /usr/local/bin/jq ".[0].percent_change_24h" | /usr/bin/xargs printf "%.*f\n" 2)
+xrp_1h=$(echo $xrp | /usr/local/bin/jq ".[0].percent_change_1h" | /usr/bin/xargs printf "%.*f\n" 2)
 
 btc_24h=$(add_arrows $btc_24h)
 eth_24h=$(add_arrows $eth_24h)
 gnt_24h=$(add_arrows $gnt_24h)
-stratis_24h=$(add_arrows $stratis_24h)
-siacoin_24h=$(add_arrows $siacoin_24h)
+xrp_24h=$(add_arrows $xrp_24h)
 
 btc_1h=$(add_arrows $btc_1h)
 eth_1h=$(add_arrows $eth_1h)
 gnt_1h=$(add_arrows $gnt_1h)
-stratis_1h=$(add_arrows $stratis_1h)
-siacoin_1h=$(add_arrows $siacoin_1h)
+xrp_1h=$(add_arrows $xrp_1h)
 
 echo "
 <html>
   <style>
-    body { color: rgba(255, 255, 255, 0.5); font-family: 'Avenir'; font-size: 16px; font-weight: 500; }
+    * {  margin: 0; padding: 0; }
+    body { padding-top: 30px; color: rgba(255, 255, 255, 0.5); font-family: 'Avenir'; font-size: 16px; font-weight: 500; }
     small { font-size: 8px; position: relative; top: -0.5em; }
     div { display: flex; align-items: center; padding: 2px 0 2px 2px; margin: 0 0 2px; border-bottom: 1px solid rgba(255, 255, 255, 0.25); }
     div:last-child { border-bottom: 0; }
@@ -68,11 +62,10 @@ echo "
   <body>
 "
 
-echo $siacoin_to_usd $siacoin_1h $siacoin_24h | /usr/bin/awk '{print "<div style=\"opacity: 0.4\"><span><img src=\"http://exomel.s3.amazonaws.com/tmp/siacoin.png\" height=14 /></span> <em>"$1"</em><small>$</small><strong>"$2"</strong><strong>"$3"</strong></div>"}'
-echo $stratis_to_usd $stratis_1h $stratis_24h | /usr/bin/awk '{print "<div style=\"opacity: 0.5\"><span><img src=\"http://exomel.s3.amazonaws.com/tmp/stratis.png\" height=14 /></span> <em>"$1"</em><small>$</small><strong>"$2"</strong><strong>"$3"</strong></div>"}'
-echo $gnt_to_usd $gnt_1h $gnt_24h | /usr/bin/awk '{print "<div style=\"opacity: 0.6\"><span><img src=\"http://exomel.s3.amazonaws.com/tmp/golem.png\" height=14 /></span> <em>"$1"</em><small>$</small><strong>"$2"</strong><strong>"$3"</strong></div>"}'
-echo $btc_to_usd $btc_1h $btc_24h | /usr/bin/awk '{print "<div style=\"opacity: 0.7\"><span><img src=\"http://exomel.s3.amazonaws.com/tmp/bitcoin.png\" height=14 /></span> <em>"$1"</em><small>$</small><strong>"$2"</strong><strong>"$3"</strong></div>"}'
-echo $eth_to_usd $eth_1h $eth_24h | /usr/bin/awk '{print "<div style=""opacity: 0.8""><span><img src=\"http://exomel.s3.amazonaws.com/tmp/ethereum.png\" height=14 /></span> <em>"$1"</em><small>$</small><strong>"$2"</strong><strong>"$3"</strong></div>"}'
+echo $xrp_to_usd $xrp_1h $xrp_24h | /usr/bin/awk '{print "<div style=\"opacity: 0.5\"><span><img src=\"http://exomel.s3.amazonaws.com/cryptocurrency-ticker/ripple.png\" height=14 /></span> <em>"$1"</em><small>$</small><strong>"$2"</strong><strong>"$3"</strong></div>"}'
+echo $gnt_to_usd $gnt_1h $gnt_24h | /usr/bin/awk '{print "<div style=\"opacity: 0.6\"><span><img src=\"http://exomel.s3.amazonaws.com/cryptocurrency-ticker/golem.png\" height=14 /></span> <em>"$1"</em><small>$</small><strong>"$2"</strong><strong>"$3"</strong></div>"}'
+echo $btc_to_usd $btc_1h $btc_24h | /usr/bin/awk '{print "<div style=\"opacity: 0.7\"><span><img src=\"http://exomel.s3.amazonaws.com/cryptocurrency-ticker/bitcoin.png\" height=14 /></span> <em>"$1"</em><small>$</small><strong>"$2"</strong><strong>"$3"</strong></div>"}'
+echo $eth_to_usd $eth_1h $eth_24h | /usr/bin/awk '{print "<div style=""opacity: 0.8""><span><img src=\"http://exomel.s3.amazonaws.com/cryptocurrency-ticker/ethereum.png\" height=14 /></span> <em>"$1"</em><small>$</small><strong>"$2"</strong><strong>"$3"</strong></div>"}'
 
 echo "
   </body>
